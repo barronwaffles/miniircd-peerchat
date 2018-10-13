@@ -599,7 +599,9 @@ class Client(object):
 
         def setckey_handler():
             global CKEY_DICT
+
             print(arguments[2][:13])
+
             if (arguments[2][:13] == "\\b_lib_c_time"):
                 self.CKEY_time = " :\\{}".format(arguments[2][:14])
             if (arguments[2][:14] == "\\b_lib_c_lobby"):
@@ -627,53 +629,44 @@ class Client(object):
                 print(list(channel.members)[i].nickname)
                 list(channel.members)[i].reply("702 {} {} {} BCAST :{}".format(
                     arguments[0], arguments[0], arguments[1], arguments[2]))
+
             print(arguments[0])
 
         def getckey_handler():
+            global CKEY_DICT
+
             print(arguments[4])
             print(arguments[1])
-            #print(self.CKEY)
-            global CKEY_DICT
-            #if(arguments[3]=="\\b_lib_c_lobby"):
-            #     self.reply("704 " + str(self.nickname) + " "  + str(arguments[0]) + " " + str(arguments[1]) + self.CKEY_lobby)
-            #     print("704 " + str(self.nickname) + " "  + str(arguments[0]) + str(arguments[1]) + " :\\b_lib_c_lobby\\MzYwMDA=")
-            #     return
-            #if(arguments[3]=="\\b_lib_c_time"):
-            #     self.reply("704 " + self.nickname + " " + arguments[0] + " " + str(arguments[1]) + self.CKEY_time)
-            #     return
-            #if(arguments[3]=="\\b_lby_wlddata"):
-            #     return
-            if(arguments[4]=="\\b_lib_u_user"):
-                 print("aaaa " +CKEY_DICT[arguments[1]+"user"])
-                 self.reply("702 " + self.nickname + " " + arguments[0] + " " + arguments[1] + " " + str(arguments[2]) + CKEY_DICT[arguments[1]+"user"])
-            if(arguments[4]=="\\b_lib_u_system"):
-                 print("bbbb "+CKEY_DICT[arguments[1]+"system"])
-                 self.reply("702 " + self.nickname + " " + arguments[0] + " " + arguments[1] + " " + str(arguments[2]) + CKEY_DICT[arguments[1]+"system"])
-            #self.reply("704 " + arguments[0] + " "  + arguments[0] + " BCAST :\\b_owned\\"+arguments[1])
-            #self.reply("703 " + arguments[0] + " " + arguments[2]  + " :End of GETCKEY")
-            #self.reply("703 " + self.nickname + " " + arguments[0] + " " + arguments[1] + " " + str(arguments[2]) + " :End of GETCKEY")
+
+            if(arguments[4] == "\\b_lib_u_user"):
+                print("aaaa " + CKEY_DICT[arguments[1] + "user"])
+                self.reply("702 {} {} {} {}{}".format(
+                    self.nickname, arguments[0], arguments[1],
+                    str(arguments[2]), CKEY_DICT[arguments[1] + "user"]))
+            if(arguments[4] == "\\b_lib_u_system"):
+                print("bbbb " + CKEY_DICT[arguments[1] + "system"])
+                self.reply("702 {} {} {} {}{}".format(
+                    self.nickname, arguments[0], arguments[1],
+                    str(arguments[2]), CKEY_DICT[arguments[1] + "system"]))
 
         def getchankey_handler():
-        #print(arguments[3])
-            #print(self.CKEY)
             global CKEY_wld
-            if(arguments[3]=="\\b_lby_wlddata"):
-                 self.reply("704 " + str(self.nickname) + " "  + str(arguments[0]) + " " + str(arguments[1]) + " :\\b_lby_wlddata\\"+CKEY_wld)
-            if(arguments[3]=="\\b_lib_c_lobby"):
-                 self.reply("704 " + str(self.nickname) + " "  + str(arguments[0]) + " " + str(arguments[1]) + " " + self.channels[irc_lower(arguments[0])].CHANKEY_lobby)
-                 #print("704 " + str(self.nickname) + " "  + str(arguments[0]) + str(arguments[1]) + " :\\b_lib_c_lobby\\MzYwMDA=")
-                 #return
-            if(arguments[3]=="\\b_lib_c_time"):
-                 self.reply("704 " + self.nickname + " " + arguments[0] + " " + str(arguments[1]) + " " +self.channels[irc_lower(arguments[0])].CHANKEY_time)
-                 return
-            #if(arguments[3]=="\\b_lby_wlddata"):
-            #     return
-            #if(arguments[4]=="\\b_lib_u_user"):
-            #     self.reply("704 " + self.nickname + " " + arguments[0] + " " + str(arguments[3]) + CKEY_DICT[arguments[2]+"user"])
-            #if(arguments[4]=="\\b_lib_u_server"):
-            #     self.reply("704 " + self.nickname + " " + arguments[0] + " " + str(arguments[3]) + CKEY_DICT[arguments[2]+"system"])
-            #self.reply("704 " + arguments[0] + " "  + arguments[0] + " BCAST :\\b_owned\\"+arguments[1])
-            #self.reply("703 " + arguments[0] + " " + arguments[1]  + " :End of GETCKEY")
+
+            # print(arguments[3])
+            # print(self.CKEY)
+
+            if(arguments[3] == "\\b_lby_wlddata"):
+                self.reply("704 {} {} {} :\\b_lby_wlddata\\{}".format(
+                    str(self.nickname), str(arguments[0]),
+                    str(arguments[1]), CKEY_wld))
+            if(arguments[3] == "\\b_lib_c_lobby"):
+                self.reply("704 {} {} {} {}".format(
+                    str(self.nickname), str(arguments[0]), str(arguments[1]),
+                    self.channels[irc_lower(arguments[0])].CHANKEY_lobby))
+            if(arguments[3] == "\\b_lib_c_time"):
+                self.reply("704 {} {} {} {}".format(
+                    self.nickname, str(arguments[0]), str(arguments[1]),
+                    self.channels[irc_lower(arguments[0])].CHANKEY_time))
 
         def utm_handler():
             print("arg0: "+arguments[0])
