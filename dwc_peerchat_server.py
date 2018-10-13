@@ -576,44 +576,48 @@ class Client(object):
             global CKEY_DICT
             global CKEY_wld
             channel = self.channels[irc_lower(arguments[0])]
-            if(arguments[1][:13]=="\\b_lib_c_time"):
-                self.channels[irc_lower(arguments[0])].CHANKEY_time=" :"+arguments[1][13:]
-            if(arguments[1][:14]=="\\b_lib_c_lobby"):
-                self.channels[irc_lower(arguments[0])].CHANKEY_lobby=" :"+arguments[1][14:]
-            if(arguments[1][:13]=="\\b_lby_wlddata"):
-                CKEY_wld=" :\\"+arguments[1][13:]
-            #if(arguments[2][:13]=="\\b_lib_u_user"):
-            #    CKEY_DICT[self.nickname+"user"]=" :\\"+arguments[2][14:]
-            #if(arguments[2][:15]=="\\b_lib_u_system"):
-            #    CKEY_DICT[self.nickname+"system"]=" :\\"+arguments[2][16:]
-                #print(CKEY_DICT[self.nickname]["user"])
+            if(arguments[1][:13] == "\\b_lib_c_time"):
+                self.channels[irc_lower(
+                    arguments[0])].CHANKEY_time = " :" + arguments[1][13:]
+            if(arguments[1][:14] == "\\b_lib_c_lobby"):
+                self.channels[irc_lower(
+                    arguments[0])].CHANKEY_lobby = " :" + arguments[1][14:]
+            if(arguments[1][:13] == "\\b_lby_wlddata"):
+                CKEY_wld = " :\\" + arguments[1][13:]
+            # if(arguments[2][:13] == "\\b_lib_u_user"):
+            #     CKEY_DICT[self.nickname+"user"] = " :\\" + arguments[2][14:]
+            # if(arguments[2][:15] == "\\b_lib_u_system"):
+            #    CKEY_DICT[self.nickname+"system"] = " :\\" + arguments[2][16:]
+            #    print(CKEY_DICT[self.nickname]["user"])
 
-            #self.reply("MODE " + arguments[0] + " +o " + arguments[0])
-            for i in range(0,len(list(channel.members))):
+            # self.reply("MODE " + arguments[0] + " +o " + arguments[0])
+            for i in range(0, len(list(channel.members))):
                 print(list(channel.members)[i].nickname)
-                list(channel.members)[i].reply("704 "+ arguments[0]+" "+arguments[0]+" "+" BCAST :"+arguments[1])
-            print("setchankey: "+arguments[1])
+                list(channel.members)[i].reply("704 {} {}  BCAST :{}".format(
+                    arguments[0], arguments[0], arguments[1]))
+            print("setchankey: ".format(arguments[1]))
 
         def setckey_handler():
             global CKEY_DICT
             print(arguments[2][:13])
-            if(arguments[2][:13]=="\\b_lib_c_time"):
-                self.CKEY_time=" :\\"+arguments[2][:14]
-            if(arguments[2][:14]=="\\b_lib_c_lobby"):
-                self.CKEY_lobby=" :\\"+arguments[2][:15]
-            if(arguments[2][:13]=="\\b_lib_u_user"):
-                CKEY_DICT[self.nickname+"user"]=" :\\"+arguments[2][14:]
-            if(arguments[2][:15]=="\\b_lib_u_system"):
-                CKEY_DICT[self.nickname+"system"]=" :\\"+arguments[2][16:]
-                #print(CKEY_DICT[self.nickname]["user"])
+            if (arguments[2][:13] == "\\b_lib_c_time"):
+                self.CKEY_time = " :\\{}".format(arguments[2][:14])
+            if (arguments[2][:14] == "\\b_lib_c_lobby"):
+                self.CKEY_lobby = " :\\{}".format(arguments[2][:15])
+            if (arguments[2][:13] == "\\b_lib_u_user"):
+                CKEY_DICT[self.nickname + "user"] = " :\\{}".format(
+                    arguments[2][14:])
+            if (arguments[2][:15] == "\\b_lib_u_system"):
+                CKEY_DICT[self.nickname + "system"] = " :\\{}".format(
+                    arguments[2][16:])
+                # print(CKEY_DICT[self.nickname]["user"])
 
-            #self.reply("MODE " + arguments[0] + " +o " + arguments[0])
+            # self.reply("MODE " + arguments[0] + " +o " + arguments[0])
             channel = self.channels[irc_lower(arguments[0])]
-            #self.message(":"+self.prefix+" UTM " + arguments[0] + " :" + arguments[1]  + " :"+arguments[1])
-            #self.message_channel(self.server.channels[irc_lower(arguments[0])],"UTM",arguments[0] + " :" + arguments[1],True)
-            for i in range(0,len(list(channel.members))):
+            for i in range(0, len(list(channel.members))):
                 print(list(channel.members)[i].nickname)
-                list(channel.members)[i].reply("702 "+ arguments[0]+" "+arguments[0]+" "+arguments[1]+" BCAST :"+arguments[2]) 
+                list(channel.members)[i].reply("702 {} {} {} BCAST :{}".format(
+                    arguments[0], arguments[0], arguments[1], arguments[2]))
             print(arguments[0])
 
         def getckey_handler():
@@ -641,7 +645,7 @@ class Client(object):
             #self.reply("703 " + self.nickname + " " + arguments[0] + " " + arguments[1] + " " + str(arguments[2]) + " :End of GETCKEY")
 
         def getchankey_handler():
-	    #print(arguments[3])
+        #print(arguments[3])
             #print(self.CKEY)
             global CKEY_wld
             if(arguments[3]=="\\b_lby_wlddata"):
