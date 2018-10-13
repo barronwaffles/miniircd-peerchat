@@ -611,6 +611,15 @@ class Client(object):
                 CKEY_DICT[self.nickname + "system"] = " :\\{}".format(
                     arguments[2][16:])
                 # print(CKEY_DICT[self.nickname]["user"])
+            if (arguments[2][:8] == "\\b_name"):
+                CKEY_DICT[self.nickname + "name"] = " :\\{}".format(
+                    arguments[2][9:])
+            if (arguments[2][:9] == "\\b_state"):
+                CKEY_DICT[self.nickname + "state"] = " :\\{}".format(
+                    arguments[2][10:])
+            if (arguments[2][:9] == "\\b_setup"):
+                CKEY_DICT[self.nickname + "setup"] = " :\\{}".format(
+                    arguments[2][10:])
 
             # self.reply("MODE " + arguments[0] + " +o " + arguments[0])
             channel = self.channels[irc_lower(arguments[0])]
