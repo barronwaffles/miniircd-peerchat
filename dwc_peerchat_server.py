@@ -36,8 +36,7 @@ import random
 
 VERSION = "1.2.1"
 
-CKEY_DICT={}
-CKEY_wld=""
+CKEY_DICT = {}
 
 PY3 = sys.version_info[0] >= 3
 
@@ -572,8 +571,6 @@ class Client(object):
                            % (self.nickname, username))
 
         def getchankey_handler():
-            global CKEY_wld
-
             channel_id = irc_lower(arguments[0])
             channel = self.channels[channel_id]
             command = arguments[3].lstrip('\\')
@@ -581,19 +578,11 @@ class Client(object):
             self.server.print_info("Channel ID : {}, Command : {}".format(
                 channel_id, command))
 
-            if command == 'b_lby_wlddata':
-                self.reply("704 {} {} {} :\\b_lby_wlddata\\ :{}".format(
-                    str(self.nickname), str(channel_id),
-                    str(arguments[1]), CKEY_wld))
-                return
-
             self.reply("704 {} {} {} :\\{}".format(
-                str(self.nickname), str(arguments[0]), str(arguments[1]),
+                str(self.nickname), channel_id, str(arguments[1]),
                 channel.pchat_keys.get(command, '')))
 
         def setchankey_handler():
-            global CKEY_wld
-
             channel_id = irc_lower(arguments[0])
             channel = self.channels[channel_id]
 
@@ -601,10 +590,7 @@ class Client(object):
             self.server.print_info("Command : {}, Value : {}".format(
                 command, value))
 
-            if command == 'b_lby_wlddata':
-                CKEY_wld = value
-            else:
-                channel.pchat_keys[command] = value
+            channel.pchat_keys[command] = value
 
             for member in channel.members:
                 self.server.print_debug(
@@ -612,7 +598,7 @@ class Client(object):
                     Member : {}, Args : {}"
                     .format(channel_id, member.nickname, arguments))
                 member.reply("704 {} {} BCAST :{}".format(
-                    arguments[0], arguments[0], arguments[1]))
+                    channel_id, channel_id, arguments[1]))
 
         def getckey_handler():
             global CKEY_DICT
@@ -641,48 +627,25 @@ class Client(object):
 
             for member in channel.members:
                 self.server.print_debug(
-                    "SetChanKey Update - Channel ID : {}, \
+                    "SetCKey Update - Channel ID : {}, \
                     Member : {}, Args : {}"
                     .format(channel_id, member.nickname, arguments))
                 member.reply("702 {} {} {} BCAST :{}".format(
-                    arguments[0], arguments[0], arguments[1], arguments[2]))
+                    channel_id, channel_id, arguments[1], arguments[2]))
 
         def utm_handler():
-            print("arg0: "+arguments[0])
-            #print(self.channels[irc_lower(arguments[0])])
-            #self.message(":"+self.nickname+"!DWCUser@"+self.host+" UTM" + " " + arguments[0]+" :"+arguments[1])
-            if(arguments[0][0]!='#'):
-                #self.message("SERVER!SERVER@* NOTICE :" + self.nickname  + " sends a UTM to " + arguments[0]  + ": "+arguments[1])
-                for j in range(0,len(self.channels)):
-                    channel = self.channels[list(self.channels)[j]]
-                    for i in range(0,len(list(channel.members))):
-                        print("a: "+list(channel.members)[i].nickname)
-                        if(list(channel.members)[i].nickname==arguments[0]):
-                            print("aa")
-                            #arg_1,arg_2 = arguments[1].split(";")
-                            str=":"
-                            #self.message_channel(self.server.channels[irc_lower(arguments[0])],"UTM",arguments[0]+" :"+arguments[1],True)
-                            list(channel.members)[i].message(":"+self.prefix+" UTM " + arguments[0]  + " :"+arguments[1])
-                            #list(channel.members)[i].message_channel_as(list(channel.members)[i],channel,"UTM", arguments[0] + " :"+arguments[1])
-                            #list(channel.members)[i].("UTM "+arguments[1])
-                            #[arguments[0]].message("UTM "+arguments[0]+" :"+arguments[1])
-            if(arguments[0][0]=='#'):
-                print(self.server.channels[irc_lower(arguments[0])].name)
+            if not arguments[0].startswith('#'):
+                for channel in self.channels:
+                    for member in channel.members:
+                        if member.nickname == arguments[0]:
+                            member.message(":{} UTM {} :{}".format(
+                                self.prefix, arguments[0], arguments[1]))
+            else:
                 channel = self.channels[irc_lower(arguments[0])]
-                #self.message(":"+self.prefix+" UTM " + arguments[0] + " :" + arguments[1]  + " :"+arguments[1])
-                #self.message_channel(self.server.channels[irc_lower(arguments[0])],"UTM",arguments[0] + " :" + arguments[1],True)
-                for i in range(0,len(list(channel.members))):
-                    print(list(channel.members)[i].nickname)
-                    #if(list(channel.members)[i].nickname==arguments[0]):
-                    if(True):
-                       print("bb")
-                       #arg_1,arg_2 = arguments[1].split(";")
-                       #str=":"
-                       #self.message_channel(self.server.channels[irc_lower(arguments[0])],"UTM",arguments[0]+" :"+arguments[1],True)
-                       list(channel.members)[i].message(":"+self.prefix+" UTM " + arguments[0] + " :"+arguments[1])
-                       #list(channel.members)[i].message_channel_as(list(channel.members)[i],channel,"UTM", arguments[0] + " :"+arguments[1])
-                       #list(channel.members)[i].("UTM "+arguments[1])
-                       #[arguments[0]].message("UTM "+arguments[0]+" :"+arguments[1])
+
+                for member in channel.members:
+                    member.message(":{} UTM {} :{}".format(
+                        self.prefix, arguments[0], arguments[1]))
 
         handler_table = {
             "SETCKEY": setckey_handler,
@@ -1063,9 +1026,7 @@ class Server(object):
 
 
 _maketrans = str.maketrans if PY3 else string.maketrans
-_ircstring_translation = _maketrans(
-    string.ascii_lowercase.upper() + "[]\\^",
-    string.ascii_lowercase + "{}|~")
+_ircstring_translation = _maketrans("[]\\^", "{}|~")
 
 
 def irc_lower(s):
