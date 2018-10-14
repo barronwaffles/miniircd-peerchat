@@ -60,9 +60,19 @@ def create_directory(path):
 
 
 class Channel(object):
-    CHANKEY_time = " :\\IRloIQAAAAA*"
+    # CHANKEY_time = " :\\IRloIQAAAAA*"
     def __init__(self, server, name):
-        self.CHANKEY_lobby=" :\\sAQAAJ7EcKcAAAAAA"+random.choice("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")+"AWAAAAAAABAAAAAAAAAAcAAAAAAAAACwAAAAwDAAAIAAAASAMAAAIAAABIAwAACQAAAIQDAAADAAAAhAMAAAoAAACEAwAADAAAAMADAAAEAAAAwAMAAAkAAADAAwAADQAAAMADAAAPAAAA-AMAAAUAAAD8AwAADgAAAPwDAAAQAAAAMwQAABIAAAA4BAAABgAAADgEAAANAAAAOAQAABEAAAB0BAAACwAAALAEAAATAAAA"
+        self.CHANKEY_lobby = "{}{}{}".format(
+            "sAQAAJ7EcKcAAAAAA",
+            random.choice("abcdefghijklmnopqrstuvwxyz\
+            ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"),
+            "AWAAAAAAABAAAAAAAAAAcAAAAAAAAACwAAAAwDAA\
+            AIAAAASAMAAAIAAABIAwAACQAAAIQDAAADAAAAhAM\
+            AAAoAAACEAwAADAAAAMADAAAEAAAAwAMAAAkAAADA\
+            AwAADQAAAMADAAAPAAAA-AMAAAUAAAD8AwAADgAAA\
+            PwDAAAQAAAAMwQAABIAAAA4BAAABgAAADgEAAANAA\
+            AAOAQAABEAAAB0BAAACwAAALAEAAATAAAA"
+        )
         self.server = server
         self.name = name
         self.members = set()
@@ -126,9 +136,6 @@ class Channel(object):
 
 
 class Client(object):
-    #CKEY_DICT={}
-    #CKEY_time=" :\\IRloIQAAAAA*"
-    #CKEY_lobby=" :\\sAQAAJ7EcKcAAAAAAxAWAAAAAAABAAAAAAAAAAcAAAAAAAAACwAAAAwDAAAIAAAASAMAAAIAAABIAwAACQAAAIQDAAADAAAAhAMAAAoAAACEAwAADAAAAMADAAAEAAAAwAMAAAkAAADAAwAADQAAAMADAAAPAAAA-AMAAAUAAAD8AwAADgAAAPwDAAAQAAAAMwQAABIAAAA4BAAABgAAADgEAAANAAAAOAQAABEAAAB0BAAACwAAALAEAAATAAAA"
     __linesep_regexp = re.compile(r"\r?\n")
     # The RFC limit for nicknames is 9 characters, but what the heck.
     __valid_nickname_regexp = re.compile(
@@ -167,7 +174,7 @@ class Client(object):
             return
         if not self.__sent_ping and self.__timestamp + 90 < now:
             if self.__handle_command == self.__command_handler:
-               # Registered.
+                # Registered.
                 self.message("PING :%s" % self.server.name)
                 self.__sent_ping = True
             else:
@@ -331,9 +338,9 @@ class Client(object):
             self.__send_names(arguments, for_join=True)
 
         def list_handler():
-            #if len(arguments) < 1:
+            # if len(arguments) < 1:
             channels = server.channels.values()
-            #else:
+            # else:
             #    channels = []
             #    for channelname in arguments[0].split(","):
             #        if server.has_channel(channelname):
@@ -720,7 +727,7 @@ class Client(object):
         self.__writebuffer += msg + "\r\n"
 
     def reply(self, msg):
-        #self.message(":%s %s" % (self.server.name, msg))
+        # self.message(":%s %s" % (self.server.name, msg))
         self.message(":s %s" % (msg))
 
     def reply_403(self, channel):
