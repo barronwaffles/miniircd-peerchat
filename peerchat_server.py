@@ -578,32 +578,27 @@ class Client(object):
                            % (self.nickname, username))
 
         def getchankey_handler():
-            channel_id = irc_lower(arguments[0])
-            channel = self.channels[channel_id]
+            channel_id = arguments[0]
+            channel = self.channels[irc_lower(channel_id)]
             command = arguments[3].lstrip('\\')
 
-            self.server.print_info("Channel ID : {}, Command : {}".format(
-                channel_id, command))
-
             self.reply("704 {} {} {} :\\{}".format(
-                str(self.nickname), channel_id, str(arguments[1]),
+                self.nickname, channel_id, arguments[1],
                 channel.pchat_keys.get(command, '')))
 
         def setchankey_handler():
-            channel_id = irc_lower(arguments[0])
-            channel = self.channels[channel_id]
+            channel_id = arguments[0]
+            channel = self.channels[irc_lower(channel_id)]
 
             _, command, value = arguments[1].rsplit('\\')
-            self.server.print_info("Command : {}, Value : {}".format(
-                command, value))
 
             channel.pchat_keys[command] = value
 
+            self.server.print_debug(
+                "SetChanKey Update - Channel ID : {}, Args : {}"
+                .format(channel_id, arguments))
+
             for member in channel.members:
-                self.server.print_debug(
-                    "SetChanKey Update - Channel ID : {}, \
-                    Member : {}, Args : {}"
-                    .format(channel_id, member.nickname, arguments))
                 member.reply("704 {} {} BCAST :{}".format(
                     channel_id, channel_id, arguments[1]))
 
@@ -613,30 +608,25 @@ class Client(object):
             user = arguments[1]
             command = arguments[4].lstrip('\\')
 
-            self.server.print_info("User : {}, Command : {}".format(
-                user, command))
-
-            self.reply("702 {} {} {} {}:\\{}".format(
+            self.reply("702 {} {} {} {} :\\{}".format(
                 self.nickname, arguments[0], user,
-                str(arguments[2]), CKEY_DICT.get((user + command), '')))
+                arguments[2], CKEY_DICT.get((user + command), '')))
 
         def setckey_handler():
             global CKEY_DICT
 
-            channel_id = irc_lower(arguments[0])
-            channel = self.channels[channel_id]
+            channel_id = arguments[0]
+            channel = self.channels[irc_lower(channel_id)]
 
             _, command, value = arguments[2].rsplit('\\')
-            self.server.print_info("Command : {}, Value : {}".format(
-                command, value))
 
             CKEY_DICT[self.nickname + command] = value
 
+            self.server.print_debug(
+                "SetCKey Update - Channel ID : {}, Args : {}"
+                .format(channel_id, arguments))
+
             for member in channel.members:
-                self.server.print_debug(
-                    "SetCKey Update - Channel ID : {}, \
-                    Member : {}, Args : {}"
-                    .format(channel_id, member.nickname, arguments))
                 member.reply("702 {} {} {} BCAST :{}".format(
                     channel_id, channel_id, arguments[1], arguments[2]))
 
@@ -1033,7 +1023,8 @@ class Server(object):
 
 
 _maketrans = str.maketrans if PY3 else string.maketrans
-_ircstring_translation = _maketrans("[]\\^", "{}|~")
+_ircstring_translation = _maketrans(string.ascii_uppercase + r"[]\^",
+                                    string.ascii_lowercase + r"{}|~")
 
 
 def irc_lower(s):
